@@ -10,7 +10,7 @@ public class Card {
      * @param suit the suit of the card
      * @param rank the rank of the card
      */
-    Card (Suit suit, Rank rank) {
+    public Card (Suit suit, Rank rank) {
         
         this.suit = suit;
         this.rank = rank;
@@ -21,10 +21,44 @@ public class Card {
      * @param suit the suit index of the card
      * @param rank the rank index of the card
      */
-    Card (int suit, int rank) {
+    public Card (int suit, int rank) {
         
         this.suit = suitFromInt(suit);
         this.rank = rankFromInt(rank);
+    }
+    
+    /**
+     * @return the suit of the card
+     */
+    public Suit getSuit () {
+        return suit;
+    }
+    
+    /**
+     * @return the rank of the card
+     */
+    public Rank getRank () {
+        return rank;
+    }
+    
+    public int baseValue () {
+        
+        switch (rank) {
+        case Deuce: return 2;
+        case Three: return 3;
+        case Four: return 4;
+        case Five: return 5;
+        case Six: return 6;
+        case Seven: return 7;
+        case Eight: return 8;
+        case Nine: return 9;
+        case Ten: return 10;
+        case Jack: return 10;
+        case Queen: return 10;
+        case King: return 10;
+        case Ace: return 1;
+        default: throw new RuntimeException("Invalid Rank");
+        }
     }
     
     /**
@@ -99,37 +133,4 @@ public class Card {
         default: throw new RuntimeException("Invalid Rank");
         }
     }
-}
-
-/**
- * 
- * Enum to represent a Suit of a card
- *
- */
-enum Suit {
-    Clubs,
-    Diamonds,
-    Hearts,
-    Spades
-}
-
-/**
- * 
- * Enum to represent a Rank of a card
- *
- */
-enum Rank {
-    Deuce,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    Ten,
-    Jack,
-    Queen,
-    King,
-    Ace
 }
