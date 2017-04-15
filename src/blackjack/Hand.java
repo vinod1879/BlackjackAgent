@@ -85,7 +85,7 @@ public class Hand {
         String str = "Hand: ";
         
         for (Card c : cards) {
-            str += c.toString() + "\n";
+            str += c.toString() + " ";
         }
         
         str += "value: " + handValue();

@@ -11,7 +11,6 @@ class Game {
     private final List<Hand> hands;
     private int turnIndex;
     private Deck deck;
-    private final int BET_AMOUNT = 100;
     
     public Game(List<Player> ps) {
         
@@ -51,6 +50,31 @@ class Game {
         }
     }
     
+    public void printResult () {
+        
+        for (Hand h : hands) {
+            Player p = h.getPlayer();
+            
+            System.out.print(p + " " + h + " ");
+        }
+        Hand dealer = hands.get(hands.size() - 1);
+        for (Hand h : hands) {
+            
+            if (h != dealer) {
+                
+                Player p = h.getPlayer();
+                int r = getReward(p);
+                String result;
+                
+                if (r > 0) { result = " wins "; }
+                else if (r < 0) { result = " loses "; }
+                else { result = " draws "; }
+                
+                System.out.println(" " + p.toString() + result);
+            }
+        }
+    }
+    
     public boolean hasGameEnded () {
         
         for (Hand h : hands) {
@@ -74,13 +98,13 @@ class Game {
     private int calculateReward (Hand p, Hand dealer) {
         
         if (p.isBlackjack() && !dealer.isBlackjack()) {
-            return (int)(BET_AMOUNT * 1.5);
+            return (int)(Configuration.BetAmount * 1.5);
         }
         else if (p.isBust() || (!dealer.isBust() && p.handValue() < dealer.handValue())) {
-            return -BET_AMOUNT;
+            return -Configuration.BetAmount;
         }
-        else if (p.handValue() > dealer.handValue()) {
-            return BET_AMOUNT;
+        else if (dealer.isBust() || p.handValue() > dealer.handValue()) {
+            return Configuration.BetAmount;
         }
         
         return 0;
@@ -135,6 +159,9 @@ class Game {
         Player agent = new Player(0, "Agent");
         int totalBet = 100 * ITERATIONS;
         int totalReward = 0;
+        int wins = 0;
+        int losses = 0;
+        int draws = 0;
         
         for (int i=0; i < ITERATIONS; i++) {
             
@@ -151,10 +178,20 @@ class Game {
             }
             
             // notify players
+            g.printResult();
+            int reward = g.getReward(agent);
+            
+            if (reward > 0) { wins++; }
+            else if (reward < 0) { losses++; }
+            else { draws++; }
+            
             totalReward += g.getReward(agent);
         }
         
         System.out.println("**** Total Amount Bet: $" + totalBet);
         System.out.println("**** Total Amount Won: $" + totalReward);
+        System.out.println("**** Total Wins: " + wins);
+        System.out.println("**** Total Losses: " + losses);
+        System.out.println("**** Total Draws: " + draws);
     }
 }
