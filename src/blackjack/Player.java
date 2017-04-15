@@ -1,10 +1,6 @@
 package blackjack;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import model.Card;
-import model.Rank;
 
 public class Player {
     
