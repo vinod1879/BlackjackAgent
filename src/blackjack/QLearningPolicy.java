@@ -1,23 +1,96 @@
 package blackjack;
 
-import java.util.List;
+import java.util.*;
 
 public class QLearningPolicy implements Policy {
     
     //Map<CardCountingState, Integer> qValues;
 
+    private static Map<PointsState,Double> qValues = new HashMap();
+    private static double epsilon  = 0.05;
+
     @Override
     public Action chooseAction(Game gameState, Player p, List<Action> actions) {
         // TODO Auto-generated method stub
-        return null;
+        List<Action> legalActions = gameState.getNextActions();
+        Action action = Action.Hit;
+        if (!legalActions.isEmpty()){
+            // need to add epsilon
+            action = getActionFromQValues(gameState);
+        }
+        return action;
     }
 
     @Override
     public void observe(Game state, Action action, Game nextState, int reward) {
         // TODO Auto-generated method stub
+
+        PointsState ps = getPointState(state,action);
+
+        double qValue = getQValue(ps);
+        double nextStateValue = getValueFromQValues(nextState);
+
+        qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
+
+        qValues.put(ps,qValue);
+    }
+
+    private double getQValue(PointsState ps){
+
+        double initQValue = 0.0;
+        if(qValues.containsKey(ps)) {
+            return qValues.get(ps);
+        }
+        qValues.put(ps,initQValue);
+        return initQValue;
+    }
+
+    private PointsState getPointState(Game state, Action action){
+
         Player p = state.getPlayerToAct();
         Hand h = state.getHandFromPlayer(p);
-        int value = h.handValue();
+        int points = h.handValue();
+
+        return new PointsState(points,action);
+
     }
+
+    private Double getValueFromQValues(Game state){
+        double maxValue = 0.0;
+        List<Action> legalActions = state.getNextActions();
+
+        if (!legalActions.isEmpty()){
+            for (Action action: legalActions){
+             PointsState ps = getPointState(state,action);
+             double psQValue = getQValue(ps);
+             if (psQValue > maxValue){
+                 maxValue = psQValue;
+             }
+            }
+        }
+        return maxValue;
+
+    }
+
+    private Action getActionFromQValues(Game state){
+        // default action
+        Action maxAction = Action.Hit;
+        double maxValue = 0.0;
+        List<Action> legalActions = state.getNextActions();
+
+        if (!legalActions.isEmpty()){
+            for (Action action: legalActions){
+                PointsState ps = getPointState(state,action);
+                double psQValue = getQValue(ps);
+                if (psQValue > maxValue){
+                    maxValue = psQValue;
+                    maxAction = action;
+                }
+            }
+        }
+        return maxAction;
+
+    }
+
 }
 

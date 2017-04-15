@@ -156,7 +156,8 @@ class Game {
     public static void main(String[] args) {
         
         int ITERATIONS = 100;
-        Player agent = new Player(0, "Agent");
+        QLearningPolicy qPolicy = new QLearningPolicy();
+        Player agent = new Player(0, "Agent" , qPolicy );
         int totalBet = 100 * ITERATIONS;
         int totalReward = 0;
         int wins = 0;
@@ -173,8 +174,9 @@ class Game {
                 List<Action> actions = g.getNextActions();
                 
                 Action chosen = p.chooseAction(actions, g);
-                
                 g.performAction(p, chosen);
+
+                // need to add the policy observe part
             }
             
             // notify players
