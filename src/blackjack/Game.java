@@ -52,11 +52,14 @@ class Game {
     
     public void printResult () {
         
+        System.out.println("------------------------------------");
+        
         for (Hand h : hands) {
             Player p = h.getPlayer();
             
-            System.out.print(p + " " + h + " ");
+            System.out.print(p + "'s " + h + "\n");
         }
+        
         Hand dealer = hands.get(hands.size() - 1);
         for (Hand h : hands) {
             
@@ -66,13 +69,15 @@ class Game {
                 int r = getReward(p);
                 String result;
                 
-                if (r > 0) { result = " wins "; }
-                else if (r < 0) { result = " loses "; }
-                else { result = " draws "; }
+                if (r > 0) { result = " wins"; }
+                else if (r < 0) { result = " loses"; }
+                else { result = " draws"; }
                 
-                System.out.println(" " + p.toString() + result);
+                System.out.println(p.toString() + result);
             }
         }
+        
+        System.out.println("------------------------------------");
     }
     
     public boolean hasGameEnded () {
