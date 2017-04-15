@@ -8,6 +8,7 @@ public class QLearningPolicy implements Policy {
 
     private static Map<PointsState,Double> qValues = new HashMap();
     private static double epsilon  = 0.05;
+    BlackjackUtil util = new BlackjackUtil();
 
     @Override
     public Action chooseAction(Game gameState, Player p, List<Action> actions) {
@@ -15,8 +16,12 @@ public class QLearningPolicy implements Policy {
         List<Action> legalActions = gameState.getNextActions();
         Action action = Action.Hit;
         if (!legalActions.isEmpty()){
-            // need to add epsilon
+            if(util.getNumber()< epsilon){
+                action = util.getRandomAction(legalActions);
+            }
+            else{
             action = getActionFromQValues(gameState);
+            }
         }
         return action;
     }
