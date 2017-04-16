@@ -12,18 +12,18 @@ public class QLearningPolicy implements Policy {
 
     @Override
     public Action chooseAction(Game gameState, Player p, List<Action> actions) {
-        // TODO Auto-generated method stub
-        List<Action> legalActions = gameState.getNextActions();
-        Action action = Action.Hit;
-        if (!legalActions.isEmpty()){
-            if(util.getNumber()< epsilon){
-                action = util.getRandomAction(legalActions);
-            }
-            else{
-            action = getActionFromQValues(gameState);
-            }
+        
+        List<Action> legalActions = actions;
+        
+        if (actions.isEmpty())
+            throw new RuntimeException("No actions to perform!");
+
+        if(util.getNumber() < epsilon){
+            return util.getRandomAction(legalActions);
         }
-        return action;
+        else{
+            return getActionFromQValues(gameState, legalActions);
+        }
     }
 
     @Override
@@ -42,59 +42,49 @@ public class QLearningPolicy implements Policy {
 
     private double getQValue(PointsState ps){
 
-        double initQValue = 0.0;
         if(qValues.containsKey(ps)) {
             return qValues.get(ps);
         }
-        qValues.put(ps,initQValue);
-        return initQValue;
-    }
-
-    private PointsState getPointState(Game state, Action action){
-
-        Player p = state.getPlayerToAct();
-        Hand h = state.getHandFromPlayer(p);
-        int points = h.handValue();
-
-        return new PointsState(points,action);
-
+        
+        return 0.0;
     }
 
     private Double getValueFromQValues(Game state){
         double maxValue = 0.0;
         List<Action> legalActions = state.getNextActions();
 
-        if (!legalActions.isEmpty()){
-            for (Action action: legalActions){
-             PointsState ps = getPointState(state,action);
-             double psQValue = getQValue(ps);
-             if (psQValue > maxValue){
-                 maxValue = psQValue;
-             }
+        for (Action action: legalActions){
+            PointsState ps = getPointState(state,action);
+            double psQValue = getQValue(ps);
+            if (psQValue > maxValue){
+                maxValue = psQValue;
             }
         }
+        
         return maxValue;
 
     }
 
-    private Action getActionFromQValues(Game state){
+    private Action getActionFromQValues(Game state, List<Action> legalActions){
         // default action
         Action maxAction = Action.Hit;
-        double maxValue = 0.0;
-        List<Action> legalActions = state.getNextActions();
+        double maxValue = -1.0;
 
-        if (!legalActions.isEmpty()){
-            for (Action action: legalActions){
-                PointsState ps = getPointState(state,action);
-                double psQValue = getQValue(ps);
-                if (psQValue > maxValue){
-                    maxValue = psQValue;
-                    maxAction = action;
-                }
+        for (Action action: legalActions){
+            PointsState ps = getPointState(state, action);
+            double psQValue = getQValue(ps);
+            
+            if (psQValue > maxValue){
+                maxValue = psQValue;
+                maxAction = action;
             }
         }
+        
+        if (maxValue == 0.0) {
+            return util.getRandomAction(legalActions);
+        }
+        
         return maxAction;
-
     }
     
     public void printQValues () {
@@ -104,6 +94,15 @@ public class QLearningPolicy implements Policy {
             
             System.out.println(key.toString() + " " + qValues.get(key));
         }
+    }
+    
+    private PointsState getPointState(Game state, Action action){
+
+        Player p = state.getPlayerToAct();
+        Hand h = state.getHandFromPlayer(p);
+        int points = h.handValue();
+
+        return new PointsState(points,action);
     }
 }
 
