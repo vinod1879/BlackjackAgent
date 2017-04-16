@@ -8,10 +8,14 @@ import model.Deck;
 
 class Game {
     
-    private final List<Hand> hands;
-    private int turnIndex;
-    private Deck deck;
+    private final List<Hand> hands; // the hands involved in the game
+    private int turnIndex;          // the index of the hand whose turn it is to move
+    private Deck deck;              // the deck of cards used in the game
     
+    /**
+     * Constructor for Game
+     * @param ps - the list of players in the game (other than the dealer)
+     */
     public Game(List<Player> ps) {
         
         this.hands = new ArrayList<Hand>();
@@ -26,6 +30,10 @@ class Game {
         initialize();
     }
     
+    /**
+     * Constructor for Game
+     * @param p - the player in the game (other than the dealer)
+     */
     public Game(Player p) {
         
         this(makeList(p));
@@ -39,6 +47,92 @@ class Game {
         return ps;
     }
     
+    /**
+     * @param p - a player involved in the game
+     * @return the player's hand
+     */
+    public Hand getHandFromPlayer(Player p) {
+        
+        for (Hand h : hands) {
+            if (p.equals(h.getPlayer())) {
+                return h;
+            }
+        }
+        throw new RuntimeException("Unknown player!");
+    }
+    
+    /**
+     * @return true iff the game has ended
+     */
+    public boolean hasGameEnded () {
+        
+        for (Hand h : hands) {
+            
+            if (!h.isBust() && !h.isStay() && !h.isBlackjack()) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * @param p - a player
+     * @return - the reward earned by the player
+     */
+    public int getReward (Player p) {
+        
+        Hand h = getHandFromPlayer(p);
+        Hand dealer = hands.get(hands.size() - 1);
+                
+        return calculateReward(h, dealer);
+    }
+    
+    /**
+     * @return the player whose turn it is to act
+     */
+    public Player getPlayerToAct () {
+        return hands.get(turnIndex).getPlayer();
+    }
+    
+    /**
+     * @return list of actions available to the player to act
+     */
+    public List<Action> getNextActions () {
+        
+        List<Action> actions = new ArrayList<Action>();
+        
+        for (Action m : Action.values()) {
+            actions.add(m);
+        }
+        
+        return actions;
+    }
+    
+    /**
+     * @param p - the player to act
+     * @param a - the action performed by the player to act
+     */
+    public void performAction (Player p, Action a) {
+        
+        Hand h = getHandFromPlayer(p);
+        
+        if (a == Action.Hit) {
+            
+            Card c = deck.deal();
+            h.addCard(c);
+            if (h.isBust()) {
+                turnIndex = (turnIndex + 1) % hands.size();
+            }
+        }
+        else if (a == Action.Stay) {
+            h.setIsStay(true);
+            turnIndex = (turnIndex + 1) % hands.size();
+        }
+    }
+    
+    // Initializes the game, by dealing two cards to each player
+    // ending with the dealer
     private void initialize () {
         
         for (Hand h : hands) {
@@ -50,7 +144,9 @@ class Game {
         }
     }
     
-    public void printResult () {
+    // Prints the result of the game, with each player's hand
+    // and whether each player won/lost/drew
+    private void printResult () {
         
         System.out.println("------------------------------------");
         
@@ -80,84 +176,26 @@ class Game {
         System.out.println("------------------------------------");
     }
     
-    public boolean hasGameEnded () {
+    // Calculates and returns the reward earned by the player whose hand
+    // is h, when the dealer's hand is `dealerHand`
+    private int calculateReward (Hand p, Hand dealerHand) {
         
-        for (Hand h : hands) {
-            
-            if (!h.isBust() && !h.isStay() && !h.isBlackjack()) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-    public int getReward (Player p) {
-        
-        Hand h = getHandFromPlayer(p);
-        Hand dealer = hands.get(hands.size() - 1);
-                
-        return calculateReward(h, dealer);
-    }
-    
-    private int calculateReward (Hand p, Hand dealer) {
-        
-        if (p.isBlackjack() && !dealer.isBlackjack()) {
+        if (p.isBlackjack() && !dealerHand.isBlackjack()) {
             return (int)(Configuration.BetAmount * 1.5);
         }
-        else if (p.isBust() || (!dealer.isBust() && p.handValue() < dealer.handValue())) {
+        else if (p.isBust() || (!dealerHand.isBust() && p.handValue() < dealerHand.handValue())) {
             return -Configuration.BetAmount;
         }
-        else if (dealer.isBust() || p.handValue() > dealer.handValue()) {
+        else if (dealerHand.isBust() || p.handValue() > dealerHand.handValue()) {
             return Configuration.BetAmount;
         }
         
         return 0;
     }
     
-    public List<Action> getNextActions () {
-        
-        List<Action> actions = new ArrayList<Action>();
-        
-        for (Action m : Action.values()) {
-            actions.add(m);
-        }
-        
-        return actions;
-    }
-    
-    public Player getPlayerToAct () {
-        return hands.get(turnIndex).getPlayer();
-    }
-    
-    public void performAction (Player p, Action a) {
-        
-        Hand h = getHandFromPlayer(p);
-        
-        if (a == Action.Hit) {
-            
-            Card c = deck.deal();
-            h.addCard(c);
-            if (h.isBust()) {
-                turnIndex = (turnIndex + 1) % hands.size();
-            }
-        }
-        else if (a == Action.Stay) {
-            h.setIsStay(true);
-            turnIndex = (turnIndex + 1) % hands.size();
-        }
-    }
-    
-    public Hand getHandFromPlayer(Player p) {
-        
-        for (Hand h : hands) {
-            if (p.equals(h.getPlayer())) {
-                return h;
-            }
-        }
-        throw new RuntimeException("Unknown player!");
-    }
-    
+    /**
+     * @param args the args for running the game
+     */
     public static void main(String[] args) {
         
         int ITERATIONS = 100;
