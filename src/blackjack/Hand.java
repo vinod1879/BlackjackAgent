@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import model.Card;
 import model.Rank;
 
-public class Hand {
+public class Hand implements Cloneable {
 
     private final Player player;
     private final List<Card> cards;
@@ -16,6 +16,13 @@ public class Hand {
         
         player = p;
         cards = new ArrayList<Card>();
+    }
+    
+    private Hand (Player p, List<Card> cs, boolean stay) {
+        
+        this.player = p;
+        this.cards = cs;
+        this.stay = stay;
     }
     
     public void addCard(Card c) {
@@ -78,6 +85,18 @@ public class Hand {
         }
         
         return val;
+    }
+    
+    @Override
+    public Hand clone () {
+        
+        List<Card> clonedCards = new ArrayList<Card>();
+        
+        for (Card c : this.cards) {
+            clonedCards.add(c.clone());
+        }
+        
+        return new Hand(this.player, clonedCards, this.stay);
     }
     
     @Override

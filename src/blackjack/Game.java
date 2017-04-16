@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import model.Card;
 import model.Deck;
 
-class Game {
+class Game implements Cloneable {
     
     private final List<Hand> hands; // the hands involved in the game
     private int turnIndex;          // the index of the hand whose turn it is to move
@@ -45,6 +45,12 @@ class Game {
         ps.add(obj);
         
         return ps;
+    }
+    
+    private Game(List<Hand> hands, int turnIndex, Deck deck) {
+        this.hands = hands;
+        this.turnIndex = turnIndex;
+        this.deck = deck;
     }
     
     /**
@@ -113,22 +119,39 @@ class Game {
      * @param p - the player to act
      * @param a - the action performed by the player to act
      */
-    public void performAction (Player p, Action a) {
+    public Game performAction (Player p, Action a) {
         
-        Hand h = getHandFromPlayer(p);
+        Game clonedGame = this.clone();
+        
+        Hand h = clonedGame.getHandFromPlayer(p);
         
         if (a == Action.Hit) {
             
-            Card c = deck.deal();
+            Card c = clonedGame.deck.deal();
             h.addCard(c);
             if (h.isBust()) {
-                turnIndex = (turnIndex + 1) % hands.size();
+                clonedGame.turnIndex = (clonedGame.turnIndex + 1) % clonedGame.hands.size();
             }
         }
         else if (a == Action.Stay) {
             h.setIsStay(true);
-            turnIndex = (turnIndex + 1) % hands.size();
+            clonedGame.turnIndex = (clonedGame.turnIndex + 1) % clonedGame.hands.size();
         }
+        
+        return clonedGame;
+    }
+    
+    @Override
+    public Game clone() {
+        
+        List<Hand> clonedHands = new ArrayList<Hand>();
+        
+        for (Hand h : this.hands) {
+            clonedHands.add(h.clone());
+        }
+        Deck clonedDeck =   this.deck.clone();
+        
+        return new Game(clonedHands, this.turnIndex, clonedDeck);
     }
     
     // Initializes the game, by dealing two cards to each player
@@ -217,9 +240,11 @@ class Game {
                 List<Action> actions = g.getNextActions();
                 
                 Action chosen = p.chooseAction(actions, g);
-                g.performAction(p, chosen);
-
-                // need to add the policy observe part
+                Game nextState = g.performAction(p, chosen);
+                int reward = nextState.getReward(p);
+                
+                p.observe(g, chosen, nextState, reward);
+                g = nextState;
             }
             
             // notify players
@@ -238,5 +263,6 @@ class Game {
         System.out.println("**** Total Wins: " + wins);
         System.out.println("**** Total Losses: " + losses);
         System.out.println("**** Total Draws: " + draws);
+        qPolicy.printQValues();
     }
 }

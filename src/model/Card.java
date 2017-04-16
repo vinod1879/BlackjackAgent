@@ -1,6 +1,6 @@
 package model;
 
-public class Card {
+public class Card implements Cloneable {
     
     private final Suit suit;
     private final Rank rank;
@@ -59,6 +59,14 @@ public class Card {
         case Ace: return 1;
         default: throw new RuntimeException("Invalid Rank");
         }
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public Card clone () {
+        return new Card(this.suit, this.rank);
     }
     
     /**

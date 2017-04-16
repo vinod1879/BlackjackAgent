@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Deck {
+public class Deck implements Cloneable {
     
     private List<Card> undealtCards;
     private List<Card> dealtCards;
@@ -21,6 +21,12 @@ public class Deck {
         if (shuffle) {
             shuffle();
         }
+    }
+    
+    private Deck(List<Card> ud_cards, List<Card> d_cards) {
+        
+        this.undealtCards = ud_cards;
+        this.dealtCards = d_cards;
     }
     
     /**
@@ -71,6 +77,23 @@ public class Deck {
         }
         
         return cList;
+    }
+    
+    @Override
+    public Deck clone() {
+        
+        List<Card> ud_cards = new ArrayList<Card>();
+        List<Card> d_cards = new ArrayList<Card>();
+        
+        for (Card c : undealtCards) {
+            ud_cards.add(c.clone());
+        }
+        
+        for (Card c : dealtCards) {
+            d_cards.add(c.clone());
+        }
+        
+        return new Deck(ud_cards, d_cards);
     }
     
     // For internal testing

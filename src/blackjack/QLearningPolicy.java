@@ -6,7 +6,7 @@ public class QLearningPolicy implements Policy {
     
     //Map<CardCountingState, Integer> qValues;
 
-    private static Map<PointsState,Double> qValues = new HashMap();
+    private static Map<PointsState,Double> qValues = new TreeMap<PointsState, Double>();
     private static double epsilon  = 0.05;
     BlackjackUtil util = new BlackjackUtil();
 
@@ -96,6 +96,14 @@ public class QLearningPolicy implements Policy {
         return maxAction;
 
     }
-
+    
+    public void printQValues () {
+        
+        Set<PointsState> keys = qValues.keySet();
+        for(PointsState key : keys) {
+            
+            System.out.println(key.toString() + " " + qValues.get(key));
+        }
+    }
 }
 
