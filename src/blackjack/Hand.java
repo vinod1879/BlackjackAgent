@@ -68,20 +68,45 @@ public class Hand implements Cloneable {
      */
     public int handValue () {
         
+        int fixedValue = handValueWithoutAces();
+        int numberOfAces = numberOfAces();
+        
+        int totalValueWithOneAceMax = fixedValue + numberOfAces + 10;
+        int totalValueWithAllAcesMin = fixedValue + numberOfAces;
+
+        if (numberOfAces == 0) {
+            return fixedValue;
+        }
+        else if (totalValueWithOneAceMax <= 21) {
+            return totalValueWithOneAceMax;
+        }
+        else if (totalValueWithAllAcesMin <= 21) {
+            return totalValueWithAllAcesMin;
+        }
+        
+        return totalValueWithOneAceMax;
+    }
+    
+    public int numberOfAces () {
+        int number = 0;
+        
+        for (Card c : cards) {
+            if (c.getRank() == Rank.Ace)
+                number ++;
+        }
+        
+        return number;
+    }
+    
+    public int handValueWithoutAces () {
+        
         int val = 0;
-        boolean aceFound = false;
         
         for (Card c : cards) {
             
-            if (c.getRank() == Rank.Ace) {
-                aceFound = true;
+            if (c.getRank() != Rank.Ace) {
+                val += c.baseValue();
             }
-            
-            val += c.baseValue();
-        }
-        
-        if (aceFound && val < 21) {
-            val += 10;
         }
         
         return val;

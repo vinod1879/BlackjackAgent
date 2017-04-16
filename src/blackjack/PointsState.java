@@ -5,11 +5,13 @@ package blackjack;
  */
 public class PointsState implements Comparable<PointsState> {
 
+    private int numberOfAces;
     private int points;
 
     private Action action;
 
-    public PointsState(int points, Action action) {
+    public PointsState(int aces, int points, Action action) {
+        this.numberOfAces = aces;
         this.points = points;
         this.action = action;
     }
@@ -32,7 +34,7 @@ public class PointsState implements Comparable<PointsState> {
     
     @Override
     public String toString () {
-        String str = "" + points + action.toString();
+        String str = "" + numberOfAces + "-" + points + "-" + action.toString();
         
         return str;
     }
@@ -53,8 +55,9 @@ public class PointsState implements Comparable<PointsState> {
     @Override
     public int hashCode () {
         int n = action == Action.Hit ? 10 : 20;
+        int uniquePoints = (1 + numberOfAces) * points;
         
-        return (points + n) * n;
+        return (uniquePoints + n) * n;
     }
 
     @Override

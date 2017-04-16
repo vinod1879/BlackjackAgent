@@ -100,9 +100,9 @@ public class QLearningPolicy implements Policy {
 
         Player p = state.getPlayerToAct();
         Hand h = state.getHandFromPlayer(p);
-        int points = h.handValue();
+        int points = h.handValueWithoutAces();
 
-        return new PointsState(points,action);
+        return new PointsState(h.numberOfAces(), points, action);
     }
 }
 
