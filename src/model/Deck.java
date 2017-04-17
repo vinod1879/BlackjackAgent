@@ -57,6 +57,9 @@ public class Deck implements Cloneable {
      */
     public Card deal () {
         
+        shuffle();
+        shuffle();
+        shuffle();
         Card c = undealtCards.remove(0);
         dealtCards.add(c);
         

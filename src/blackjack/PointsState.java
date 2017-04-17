@@ -7,29 +7,25 @@ public class PointsState implements Comparable<PointsState> {
 
     private int numberOfAces;
     private int points;
-
     private Action action;
+    
 
     public PointsState(int aces, int points, Action action) {
         this.numberOfAces = aces;
         this.points = points;
         this.action = action;
     }
+    
+    public int getNumberOfAces() {
+        return numberOfAces;
+    }
 
     public int getPoints() {
         return points;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
-    }
-
     public Action getAction() {
         return action;
-    }
-
-    public void setAction(Action action) {
-        this.action = action;
     }
     
     @Override
@@ -46,7 +42,9 @@ public class PointsState implements Comparable<PointsState> {
             
             PointsState other = (PointsState)obj;
             
-            return other.points == this.points && other.action == this.action;
+            return other.numberOfAces == this.numberOfAces &&
+                   other.points == this.points && 
+                   other.action == this.action;
         }
         
         return false;
@@ -55,9 +53,8 @@ public class PointsState implements Comparable<PointsState> {
     @Override
     public int hashCode () {
         int n = action == Action.Hit ? 10 : 20;
-        int uniquePoints = (1 + numberOfAces) * points;
         
-        return (uniquePoints + n) * n;
+        return numberOfAces * 1000 + points * 100 + n;
     }
 
     @Override

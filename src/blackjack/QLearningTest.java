@@ -4,8 +4,8 @@ public class QLearningTest {
 
     public static void main(String[] args) {
         
-        int learning            = 100000;
-        double startEpsilon     = 0.9;
+        int learning            = 10000;
+        double startEpsilon     = 0.3;
         long trials = 0;
         int games = 100;
        
@@ -15,12 +15,12 @@ public class QLearningTest {
         System.out.println("******** Training ********");
         
         double epsilon = startEpsilon;
-        while (epsilon > 0.05) {
+        while (epsilon > 0.02) {
             
             System.out.println("Starting trials of " + learning + " epislodes:");
             System.out.println("Epsilon: " + epsilon);
             qPolicy.setEpsion(epsilon);
-            trainAgent(agent, learning);
+            trainAgent(agent, learning, 10);
             
             epsilon -= 0.1;
             trials += learning;
@@ -38,13 +38,15 @@ public class QLearningTest {
         playRealgames(agent, 100);
     }
     
-    public static void trainAgent (Player agent, int ITERATIONS) {
+    public static void trainAgent (Player agent, int ITERATIONS, int runs) {
         
         for (int i=0; i < ITERATIONS; i++) {
             
-            Game g = new Game(agent);
+            Game episode = new Game(agent);
             
-            g = Game.playRound(g);
+            for (int j=0; j < runs; j++) {
+                Game.playRound(episode.redealToDealer());
+            }
         }
     }
     

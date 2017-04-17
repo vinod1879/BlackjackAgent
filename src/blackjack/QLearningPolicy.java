@@ -31,12 +31,12 @@ public class QLearningPolicy implements Policy {
     public void observe(Game state, Action action, Player p, Game nextState, int reward) {
 
         PointsState ps = getPointState(state, p, action);
-
+        
         double qValue = getQValue(ps);
         double nextStateValue = getValueFromQValues(nextState, p);
 
         qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
-
+        
         qValues.put(ps, qValue);
     }
 
@@ -50,7 +50,7 @@ public class QLearningPolicy implements Policy {
     }
 
     private Double getValueFromQValues(Game state, Player p){
-        double maxValue = 0.0;
+        double maxValue = Double.NEGATIVE_INFINITY;
         List<Action> legalActions = state.getNextActions();
 
         for (Action action: legalActions){
@@ -67,8 +67,8 @@ public class QLearningPolicy implements Policy {
 
     private Action getActionFromQValues(Game state, Player p, List<Action> legalActions){
         // default action
-        Action maxAction = Action.Hit;
-        double maxValue = -1.0;
+        Action maxAction = null;
+        double maxValue = Double.NEGATIVE_INFINITY;
 
         for (Action action: legalActions){
             PointsState ps = getPointState(state, p, action);
@@ -80,7 +80,7 @@ public class QLearningPolicy implements Policy {
             }
         }
         
-        if (maxValue == 0.0) {
+        if (maxAction == null) {
             return BlackjackUtil.getRandomAction(legalActions);
         }
         
@@ -102,9 +102,8 @@ public class QLearningPolicy implements Policy {
     private PointsState getPointState(Game state, Player p, Action action){
 
         Hand h = state.getHandFromPlayer(p);
-        int points = h.handValueWithoutAces();
 
-        return new PointsState(h.numberOfAces(), points, action);
+        return new PointsState(h.numberOfAces(), h.handValueWithoutAces(), action);
     }
 }
 

@@ -30,6 +30,10 @@ public class Hand implements Cloneable {
         cards.add(c);
     }
     
+    public void clearCards () {
+        cards.clear();
+    }
+    
     public Player getPlayer () {
         return player;
     }
