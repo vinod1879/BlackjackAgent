@@ -43,7 +43,33 @@ public class Player {
     }
     
     public void observe(Game g, Action action, Game nextState, int reward) {
+        
+//        if (this.policy instanceof QLearningPolicy && !this.getName().equals("Dealer")) {
+//            printObservation(g, action, this, nextState, reward);
+//        }
         this.policy.observe(g, action, this, nextState, reward);
+    }
+    
+    private static void printObservation(Game g, Action action, Player p, Game nextState, int reward) {
+        
+        String str = "Observing: ";
+        
+        Hand pHand = g.getHandFromPlayer(p);
+        
+        str += p.toString() ;
+        str += " takes action: " + action;
+        str += "\nwith hand " + pHand;
+        str += "\nleading to hand " + nextState.getHandFromPlayer(p);
+        str += "\nearning reward " + reward;
+        
+        if (pHand.handValue() == 18 && pHand.numberOfAces() == 0 && action == Action.Hit) {
+        
+            if (reward > 0) {
+                
+                System.out.println("!!!!");
+            }
+            System.out.println(str);
+        }
     }
     
     /**
