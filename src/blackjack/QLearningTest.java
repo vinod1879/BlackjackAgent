@@ -17,7 +17,7 @@ public class QLearningTest {
         double epsilon = startEpsilon;
         while (epsilon > 0.02) {
             
-            System.out.println("Starting trials of " + learning + " epislodes:");
+            System.out.println("Starting trials of " + learning + " episodes:");
             System.out.println("Epsilon: " + epsilon);
             qPolicy.setEpsion(epsilon);
             trainAgent(agent, learning, 10);

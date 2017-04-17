@@ -8,7 +8,7 @@ public class QLearningPolicy implements Policy {
 
     private static Map<PointsState, Double> qValues = new TreeMap<PointsState, Double>();
     private double epsilon  = 0.30;
-    
+
     public void setEpsion (double ep) {
         epsilon = ep;
     }
@@ -31,12 +31,18 @@ public class QLearningPolicy implements Policy {
     public void observe(Game state, Action action, Player p, Game nextState, int reward) {
 
         PointsState ps = getPointState(state, p, action);
-        
+
         double qValue = getQValue(ps);
-        double nextStateValue = getValueFromQValues(nextState, p);
+        double nextStateValue ;
+        if( action == Action.Stay){
+            nextStateValue = getQValue(ps);
+        }
+        else {
+            nextStateValue = getValueFromQValues(nextState, p);
+        }
 
         qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
-        
+
         qValues.put(ps, qValue);
     }
 
