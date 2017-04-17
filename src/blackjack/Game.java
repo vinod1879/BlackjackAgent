@@ -58,6 +58,21 @@ class Game implements Cloneable {
         this.turnIndex = turnIndex;
         this.deck = deck;
     }
+    
+    public int getBestHandValue () {
+        
+        int value = 0;
+        for (int i=0; i<(hands.size()-1); i++) {
+            
+            int currentValue = hands.get(i).handValue();
+            
+            if (currentValue > value && currentValue <= 21) {
+                value = currentValue;
+            }
+        }
+        
+        return value;
+    }
 
     /**
      * @param p - a player involved in the game
