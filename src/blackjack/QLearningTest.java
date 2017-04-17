@@ -6,7 +6,7 @@ public class QLearningTest {
 
     public static void main(String[] args) {
         
-        int learning = 10000000;
+        int learning = 1000000;
         int games = 100;
        
         QLearningPolicy qPolicy = new QLearningPolicy();
@@ -30,18 +30,7 @@ public class QLearningTest {
             
             Game g = new Game(agent);
             
-            while(!g.hasGameEnded()) {
-             
-                Player p = g.getPlayerToAct();
-                List<Action> actions = g.getNextActions();
-                
-                Action chosen = p.chooseAction(actions, g);
-                Game nextState = g.performAction(p, chosen);
-                int reward = nextState.getReward(p);
-                
-                p.observe(g, chosen, nextState, reward);
-                g = nextState;
-            }
+            g = Game.playRound(g);
         }
     }
     
@@ -57,18 +46,7 @@ public class QLearningTest {
             
             Game g = new Game(agent);
             
-            while(!g.hasGameEnded()) {
-             
-                Player p = g.getPlayerToAct();
-                List<Action> actions = g.getNextActions();
-                
-                Action chosen = p.chooseAction(actions, g);
-                Game nextState = g.performAction(p, chosen);
-                int reward = nextState.getReward(p);
-                
-                p.observe(g, chosen, nextState, reward);
-                g = nextState;
-            }
+            g = Game.playRound(g);
             
             // notify players
             g.printResult();
