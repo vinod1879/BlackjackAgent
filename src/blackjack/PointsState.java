@@ -65,6 +65,10 @@ public class PointsState implements Comparable<PointsState> {
         
         PointsState other = (PointsState)o;
         
+        if (this.numberOfAces < other.numberOfAces)
+            return -1;
+        else if (other.numberOfAces > this.numberOfAces)
+            return 1;
         if (this.points < other.points)
             return -1;
         else if (this.points > other.points)

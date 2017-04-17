@@ -7,16 +7,8 @@ public class Player {
     private final int           id;
     private final String        name;
     private final Policy        policy;
-    private Action lastAction;
     
-    public void setLastAction(Action act) {
-        lastAction = act;
-    }
-    
-    public Action getLastAction () {
-        return lastAction;
-    }
-    
+
     public Player (int id, String name, Policy policy) {
         
         this.id = id;

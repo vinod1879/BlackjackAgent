@@ -13,9 +13,12 @@ public class Deck implements Cloneable {
      * Constructor for a new Deck
      * @param shuffle - whether the Deck should be shuffled
      */
-    public Deck (boolean shuffle) {
+    public Deck (int n, boolean shuffle) {
         
-        undealtCards = createDeck();
+        undealtCards = new ArrayList<Card>();
+        for (int i=0; i<n; i++) {
+            undealtCards.addAll(createDeck());
+        }
         dealtCards = new ArrayList<Card>();
         
         if (shuffle) {
@@ -99,7 +102,7 @@ public class Deck implements Cloneable {
     // For internal testing
     public static void main(String[] args) {
         
-        Deck d = new Deck(true);
+        Deck d = new Deck(1, true);
 
         for (Card c : d.undealtCards) {
             System.out.print(c + " ");

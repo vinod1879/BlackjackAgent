@@ -7,33 +7,28 @@ public class QLearningPolicy implements Policy {
     //Map<CardCountingState, Integer> qValues;
 
     private static Map<PointsState,Double> qValues = new TreeMap<PointsState, Double>();
-    private double epsilon  = 0.05;
-    BlackjackUtil util = new BlackjackUtil();
+    private double epsilon  = 0.30;
     
+    public void setEpsion (double ep) {
+        epsilon = ep;
+    }
    
     @Override
-    public Action chooseAction(Game gameState, Player p, List<Action> actions) {
+    public Action chooseAction(Game gameState, Player p, List<Action> legalActions) {
         
-        List<Action> legalActions = actions;
-        
-        if (actions.isEmpty())
+        if (legalActions.isEmpty())
             throw new RuntimeException("No actions to perform!");
 
-        if(util.getNumber() < epsilon){
-            return util.getRandomAction(legalActions);
+        if(BlackjackUtil.getNumber() < epsilon){
+            return BlackjackUtil.getRandomAction(legalActions);
         }
         else{
             return getActionFromQValues(gameState, p, legalActions);
         }
     }
     
-    public void setEpsion (double ep) {
-        epsilon = ep;
-    }
-
     @Override
     public void observe(Game state, Action action, Player p, Game nextState, int reward) {
-        // TODO Auto-generated method stub
 
         PointsState ps = getPointState(state, p, action);
 
@@ -86,7 +81,7 @@ public class QLearningPolicy implements Policy {
         }
         
         if (maxValue == 0.0) {
-            return util.getRandomAction(legalActions);
+            return BlackjackUtil.getRandomAction(legalActions);
         }
         
         return maxAction;

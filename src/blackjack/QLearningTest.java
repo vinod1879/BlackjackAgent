@@ -1,20 +1,34 @@
 package blackjack;
 
-import java.util.List;
-
 public class QLearningTest {
 
     public static void main(String[] args) {
         
-        int learning = 1000000;
+        int learning            = 100000;
+        double startEpsilon     = 0.9;
+        long trials = 0;
         int games = 100;
        
         QLearningPolicy qPolicy = new QLearningPolicy();
         Player agent = new Player(0, "Agent" , qPolicy );
         
-        trainAgent(agent, learning);
+        System.out.println("******** Training ********");
         
-        System.out.println("********* Q-policy Derived after " + learning + " trials *********");
+        double epsilon = startEpsilon;
+        while (epsilon > 0.05) {
+            
+            System.out.println("Starting trials of " + learning + " epislodes:");
+            System.out.println("Epsilon: " + epsilon);
+            qPolicy.setEpsion(epsilon);
+            trainAgent(agent, learning);
+            
+            epsilon -= 0.1;
+            trials += learning;
+        }
+        
+        System.out.println("******** Training Complete ********");
+        
+        System.out.println("********* Q-policy Derived after " + trials + " trials *********");
         
         qPolicy.printQValues();
         qPolicy.setEpsion(0.0);

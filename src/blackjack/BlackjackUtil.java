@@ -8,13 +8,13 @@ import java.util.Random;
  */
 public class BlackjackUtil {
 
-    public double getNumber() {
+    public static double getNumber() {
         Random generator = new Random();
         double number = generator.nextDouble();
         return number;
     }
 
-    public Action getRandomAction(List<Action> legalActions){
+    public static Action getRandomAction(List<Action> legalActions){
         Random randomizer = new Random();
         return legalActions.get(randomizer.nextInt(legalActions.size()));
     }

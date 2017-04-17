@@ -1,7 +1,9 @@
 package blackjack;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import model.Card;
 import model.Deck;
@@ -25,7 +27,7 @@ class Game implements Cloneable {
         }
         this.hands.add(new Hand(new Player(0, "Dealer")));
         turnIndex = 0;
-        deck = new Deck(true);
+        deck = new Deck(2, true);
 
         initialize();
     }
@@ -226,6 +228,10 @@ class Game implements Cloneable {
     }
 
     public static Game playRound (Game g) {
+        
+        Map<Player, Game> previousGameDict = new HashMap<Player, Game>();
+        Map<Player, Game> nextGameDict = new HashMap<Player, Game>();
+        Map<Player, Action> actionsDict = new HashMap<Player, Action>();
 
         while(!g.hasGameEnded()) {
 
@@ -235,19 +241,18 @@ class Game implements Cloneable {
             Action chosen = p.chooseAction(actions, g);
             Game nextState = g.performAction(p, chosen);
 
-
-            p.setPreviousGameState(g);
-            p.setLastAction(chosen);
-            p.setNextGameState(nextState);
-
+            previousGameDict.put(p, g);
+            actionsDict.put(p, chosen);
+            nextGameDict.put(p, nextState);
+            
             for(Hand h : g.getHands()) {
 
                 Player ep = h.getPlayer();
 
-                if (ep.getPreviousGameState() != null) {
+                if (previousGameDict.containsKey(ep)) {
 
                     int reward = nextState.getReward(ep);
-                    ep.observe(ep.getPreviousGameState(), ep.getLastAction(), ep.getNextGameState(), reward);
+                    ep.observe(previousGameDict.get(ep), actionsDict.get(ep), nextGameDict.get(ep), reward);
                 }
             }
 
@@ -279,6 +284,7 @@ class Game implements Cloneable {
 
             // notify players
             g.printResult();
+            qPolicy.printQValues();
             int reward = g.getReward(agent);
 
             if (reward > 0) { wins++; }
