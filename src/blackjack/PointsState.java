@@ -67,16 +67,20 @@ public class PointsState implements Comparable<PointsState> {
         
         if (this.numberOfAces < other.numberOfAces)
             return -1;
-        else if (other.numberOfAces > this.numberOfAces)
+        else if (this.numberOfAces > other.numberOfAces)
             return 1;
-        if (this.points < other.points)
-            return -1;
-        else if (this.points > other.points)
-            return 1;
-        else if (this.action == Action.Hit && other.action == Action.Stay) 
-            return -1;
-        else if (this.action == Action.Stay && other.action == Action.Hit)
-            return 1;
+        else {
+            if (this.points < other.points)
+                return -1;
+            else if (this.points > other.points)
+                return 1;
+            else {
+                if (this.action == Action.Hit && other.action == Action.Stay) 
+                    return -1;
+                else if (this.action == Action.Stay && other.action == Action.Hit)
+                    return 1;
+            }
+        }
         
         return 0;
     }

@@ -6,7 +6,7 @@ public class QLearningPolicy implements Policy {
     
     //Map<CardCountingState, Integer> qValues;
 
-    private static Map<PointsState,Double> qValues = new TreeMap<PointsState, Double>();
+    private static Map<PointsState, Double> qValues = new TreeMap<PointsState, Double>();
     private double epsilon  = 0.30;
     
     public void setEpsion (double ep) {
@@ -37,7 +37,7 @@ public class QLearningPolicy implements Policy {
 
         qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
 
-        qValues.put(ps,qValue);
+        qValues.put(ps, qValue);
     }
 
     private double getQValue(PointsState ps){
@@ -92,7 +92,10 @@ public class QLearningPolicy implements Policy {
         Set<PointsState> keys = qValues.keySet();
         for(PointsState key : keys) {
             
-            System.out.println(key.toString() + " " + qValues.get(key));
+            Double val = qValues.get(key);
+            int intVal = val.intValue();
+            
+            System.out.println(key.toString() + " " + intVal);
         }
     }
     

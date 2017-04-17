@@ -190,6 +190,10 @@ class Game implements Cloneable {
 
                 h.addCard(deck.deal());
             }
+            
+            if (h.isTwentyOne() || h.isBlackjack()) {
+                turnIndex = (turnIndex + 1) % hands.size();
+            }
         }
     }
 
