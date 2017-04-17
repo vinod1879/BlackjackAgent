@@ -31,19 +31,22 @@ public class QLearningPolicy implements Policy {
     public void observe(Game state, Action action, Player p, Game nextState, int reward) {
 
         PointsState ps = getPointState(state, p, action);
+        PointsState nps = getPointState(nextState, p, action);
 
         double qValue = getQValue(ps);
         double nextStateValue ;
-        if( action == Action.Stay){
+        if( ps.equals(nps) ){
             nextStateValue = getQValue(ps);
         }
         else {
             nextStateValue = getValueFromQValues(nextState, p);
         }
+        
+        double prevWeightedValue = (1.0 - Configuration.alpha) * qValue;//-32
+        double weightedValue = Configuration.alpha * (reward + nextStateValue);//-20
+        double newValue = prevWeightedValue + weightedValue;//-36
 
-        qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
-
-        qValues.put(ps, qValue);
+        qValues.put(ps, newValue);
     }
 
     private double getQValue(PointsState ps){
