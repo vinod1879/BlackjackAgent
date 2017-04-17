@@ -7,9 +7,10 @@ public class QLearningPolicy implements Policy {
     //Map<CardCountingState, Integer> qValues;
 
     private static Map<PointsState,Double> qValues = new TreeMap<PointsState, Double>();
-    private static double epsilon  = 0.05;
+    private double epsilon  = 0.05;
     BlackjackUtil util = new BlackjackUtil();
-
+    
+   
     @Override
     public Action chooseAction(Game gameState, Player p, List<Action> actions) {
         
@@ -22,18 +23,22 @@ public class QLearningPolicy implements Policy {
             return util.getRandomAction(legalActions);
         }
         else{
-            return getActionFromQValues(gameState, legalActions);
+            return getActionFromQValues(gameState, p, legalActions);
         }
+    }
+    
+    public void setEpsion (double ep) {
+        epsilon = ep;
     }
 
     @Override
-    public void observe(Game state, Action action, Game nextState, int reward) {
+    public void observe(Game state, Action action, Player p, Game nextState, int reward) {
         // TODO Auto-generated method stub
 
-        PointsState ps = getPointState(state,action);
+        PointsState ps = getPointState(state, p, action);
 
         double qValue = getQValue(ps);
-        double nextStateValue = getValueFromQValues(nextState);
+        double nextStateValue = getValueFromQValues(nextState, p);
 
         qValue = qValue + Configuration.alpha*((reward + nextStateValue)- qValue);
 
@@ -49,12 +54,12 @@ public class QLearningPolicy implements Policy {
         return 0.0;
     }
 
-    private Double getValueFromQValues(Game state){
+    private Double getValueFromQValues(Game state, Player p){
         double maxValue = 0.0;
         List<Action> legalActions = state.getNextActions();
 
         for (Action action: legalActions){
-            PointsState ps = getPointState(state,action);
+            PointsState ps = getPointState(state, p, action);
             double psQValue = getQValue(ps);
             if (psQValue > maxValue){
                 maxValue = psQValue;
@@ -65,13 +70,13 @@ public class QLearningPolicy implements Policy {
 
     }
 
-    private Action getActionFromQValues(Game state, List<Action> legalActions){
+    private Action getActionFromQValues(Game state, Player p, List<Action> legalActions){
         // default action
         Action maxAction = Action.Hit;
         double maxValue = -1.0;
 
         for (Action action: legalActions){
-            PointsState ps = getPointState(state, action);
+            PointsState ps = getPointState(state, p, action);
             double psQValue = getQValue(ps);
             
             if (psQValue > maxValue){
@@ -96,9 +101,8 @@ public class QLearningPolicy implements Policy {
         }
     }
     
-    private PointsState getPointState(Game state, Action action){
+    private PointsState getPointState(Game state, Player p, Action action){
 
-        Player p = state.getPlayerToAct();
         Hand h = state.getHandFromPlayer(p);
         int points = h.handValueWithoutAces();
 

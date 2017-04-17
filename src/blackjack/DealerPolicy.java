@@ -20,7 +20,7 @@ public class DealerPolicy implements Policy {
     }
 
     @Override
-    public void observe(Game state, Action action, Game nextState, int reward) {
+    public void observe(Game state, Action action, Player p, Game nextState, int reward) {
         // TODO Auto-generated method stub
     }
 

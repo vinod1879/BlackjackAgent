@@ -7,6 +7,15 @@ public class Player {
     private final int           id;
     private final String        name;
     private final Policy        policy;
+    private Action lastAction;
+    
+    public void setLastAction(Action act) {
+        lastAction = act;
+    }
+    
+    public Action getLastAction () {
+        return lastAction;
+    }
     
     public Player (int id, String name, Policy policy) {
         
@@ -42,7 +51,7 @@ public class Player {
     }
     
     public void observe(Game g, Action action, Game nextState, int reward) {
-        this.policy.observe(g, action, nextState, reward);
+        this.policy.observe(g, action, this, nextState, reward);
     }
     
     /**

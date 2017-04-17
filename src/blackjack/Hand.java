@@ -84,7 +84,7 @@ public class Hand implements Cloneable {
             return totalValueWithAllAcesMin;
         }
         
-        return totalValueWithOneAceMax;
+        return totalValueWithAllAcesMin;
     }
     
     public int numberOfAces () {

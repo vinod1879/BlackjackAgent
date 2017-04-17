@@ -30,6 +30,10 @@ class Game implements Cloneable {
         initialize();
     }
     
+    public List<Hand> getHands() {
+        return hands;
+    }
+
     /**
      * Constructor for Game
      * @param p - the player in the game (other than the dealer)
@@ -74,7 +78,7 @@ class Game implements Cloneable {
         
         for (Hand h : hands) {
             
-            if (!h.isBust() && !h.isStay() && !h.isBlackjack()) {
+            if (!h.isBust() && !h.isStay() && !h.isBlackjack() && !h.isTwentyOne()) {
                 return false;
             }
         }
@@ -88,10 +92,15 @@ class Game implements Cloneable {
      */
     public int getReward (Player p) {
         
-        Hand h = getHandFromPlayer(p);
-        Hand dealer = hands.get(hands.size() - 1);
+        if (hasGameEnded()) {
+        
+            Hand h = getHandFromPlayer(p);
+            Hand dealer = hands.get(hands.size() - 1);
                 
-        return calculateReward(h, dealer);
+            return calculateReward(h, dealer);
+        }
+        
+        return 0;
     }
     
     /**
@@ -129,7 +138,7 @@ class Game implements Cloneable {
             
             Card c = clonedGame.deck.deal();
             h.addCard(c);
-            if (h.isBust()) {
+            if (h.isBust() || h.isTwentyOne() || h.isBlackjack()) {
                 clonedGame.turnIndex = (clonedGame.turnIndex + 1) % clonedGame.hands.size();
             }
         }
@@ -169,7 +178,7 @@ class Game implements Cloneable {
     
     // Prints the result of the game, with each player's hand
     // and whether each player won/lost/drew
-    private void printResult () {
+    public void printResult () {
         
         System.out.println("------------------------------------");
         
