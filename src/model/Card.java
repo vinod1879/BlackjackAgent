@@ -41,6 +41,16 @@ public class Card implements Cloneable {
         return rank;
     }
     
+    public boolean isHighCard () {
+        
+        return this.baseValue() > 9 || this.rank == Rank.Ace;
+    }
+    
+    public boolean isLowCard () {
+        
+        return this.baseValue() < 7 && this.rank != Rank.Ace;
+    }
+    
     public int baseValue () {
         
         switch (rank) {
@@ -140,5 +150,22 @@ public class Card implements Cloneable {
         case Ace: return "A";
         default: throw new RuntimeException("Invalid Rank");
         }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Card) {
+            
+            Card other = (Card)obj;
+            
+            return other.rank == this.rank && other.suit == this.suit;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public int hashCode () {
+        return baseValue();
     }
 }
