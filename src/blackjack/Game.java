@@ -35,6 +35,11 @@ class Game implements Cloneable {
     public List<Hand> getHands() {
         return hands;
     }
+    
+    public List<Card> getVisibleCards () {
+        
+        return deck.getDealtCards();
+    }
 
     /**
      * Constructor for Game
@@ -101,6 +106,17 @@ class Game implements Cloneable {
         }
 
         return true;
+    }
+    
+    public boolean isLowOnCards () {
+        
+        int requiredCards = 10 * hands.size();
+        
+        return deck.remainingCards() < requiredCards;
+    }
+    
+    public void redeck () {
+        deck.reset();
     }
 
     /**
@@ -196,6 +212,7 @@ class Game implements Cloneable {
     // ending with the dealer
     private void initialize () {
 
+        turnIndex = 0;
         for (Hand h : hands) {
 
             for (int i=0; i<2; i++) {
@@ -207,6 +224,16 @@ class Game implements Cloneable {
                 turnIndex = (turnIndex + 1) % hands.size();
             }
         }
+    }
+    
+    public void reset () {
+        
+        for (Hand h : hands) {
+            
+            h.clearCards();
+        }
+        
+        initialize();
     }
 
     // Prints the result of the game, with each player's hand

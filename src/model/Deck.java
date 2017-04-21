@@ -26,6 +26,10 @@ public class Deck implements Cloneable {
         }
     }
     
+    public List<Card> getDealtCards () {
+        return dealtCards;
+    }
+    
     private Deck(List<Card> ud_cards, List<Card> d_cards) {
         
         this.undealtCards = ud_cards;
@@ -48,6 +52,18 @@ public class Deck implements Cloneable {
         }
         
         undealtCards = cList;
+    }
+    
+    public int remainingCards () {
+        
+        return undealtCards.size();
+    }
+    
+    public void reset () {
+        
+        undealtCards.addAll(dealtCards);
+        dealtCards.clear();
+        shuffle();
     }
     
     /**

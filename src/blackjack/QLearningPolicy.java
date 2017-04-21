@@ -2,13 +2,25 @@ package blackjack;
 
 import java.util.*;
 
+import model.Card;
+
 public class QLearningPolicy implements Policy {
     
     //Map<CardCountingState, Integer> qValues;
 
     private static Map<PointsState, Double> qValues = new TreeMap<PointsState, Double>();
     private double epsilon  = 0.30;
-
+    private boolean isCountingPolicy;
+    
+    public QLearningPolicy() {
+        
+        isCountingPolicy = false;
+    }
+    
+    public QLearningPolicy(boolean countCards) {
+        this.isCountingPolicy = countCards;
+    }
+    
     public void setEpsion (double ep) {
         epsilon = ep;
     }
@@ -111,8 +123,23 @@ public class QLearningPolicy implements Policy {
     private PointsState getPointState(Game state, Player p, Action action){
 
         Hand h = state.getHandFromPlayer(p);
-
-        return new PointsState(h.numberOfAces(), h.handValueWithoutAces(), action);
+        
+        if (this.isCountingPolicy) {
+            
+           int cc = 0;
+           
+           List<Card> cards = state.getVisibleCards();
+           for (Card c : cards) {
+               if (c.isHighCard()) { cc --; }
+               else if (c.isLowCard()) { cc ++; }
+           }
+            
+            return new PointsState(h.numberOfAces(), h.handValueWithoutAces(), action, cc);
+        }
+        else {
+        
+            return new PointsState(h.numberOfAces(), h.handValueWithoutAces(), action);
+        }
     }
 }
 

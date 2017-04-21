@@ -32,6 +32,17 @@ public class Hand implements Cloneable {
     
     public void clearCards () {
         cards.clear();
+        stay = false;
+    }
+    
+    public List<Card> getCards () {
+        
+        List<Card> ccs = new ArrayList<Card>();
+        
+        for (Card c : cards) {
+            ccs.add(c.clone());
+        }
+        return ccs;
     }
     
     public Player getPlayer () {
